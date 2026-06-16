@@ -1,0 +1,19 @@
+// # Colores , fuentes , spacings
+
+$color-primary: #2563eb;
+$color-bg: #f8fafc;
+$color-text: #0f172a;
+$color-success: #16a34a;
+$color-error: #dc2626;
+
+// Breakpoints para Responsive
+$breakpoint-mobile: 480px;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1024px;
+
+// Exportamos las variables para que también pueden ser leidas desde TypeScript
+
+:export {
+  primary: $color-primary;
+  background: $color-bg;
+}
