@@ -1,7 +1,13 @@
 import { useProduct } from "../hooks/useProducts";
 
+// Importamos nuestra tienda global
+import { useCartStore } from "../hooks/useCartStore";
+
 export const Home = () => {
   const { products, loading, error } = useProduct();
+
+  // Extraemos únicamente la función 'addToCart' de la tienda global
+  const addToCart = useCartStore((state) => state.addToCart);
 
   if (loading) return <p>Cargando productos del catálogo...</p>;
   if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
@@ -31,7 +37,9 @@ export const Home = () => {
             />
             <h3>{product.title}</h3>
             <p>{product.price.toFixed(2)}</p>
-            <button>Añadir al carrito</button>
+            <button onClick={() => addToCart(product)}>
+              Añadir al carrito
+            </button>
           </div>
         ))}
       </div>
