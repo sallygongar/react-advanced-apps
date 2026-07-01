@@ -48,7 +48,7 @@ export const Checkout = () => {
   // Esta función solo se ejecutará si Zod da el visto bueno a los datos
   const onSubmit = (data: CheckoutFormData) => {
     setIsProcessing(true);
-
+    console.log(data, "<< Datos");
     // Simulamos los 3 segundos que tarda un banco real en autorizar un cobro
     setTimeout(() => {
       setIsProcessing(false);
