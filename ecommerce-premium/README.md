@@ -1,6 +1,10 @@
 # 🚀 TS/React E-Commerce con Pasarela de Pago Simulada
 
-¡Bienvenido! Este proyecto es una plataforma de comercio electrónico moderna, rápida y completamente tipada, construida con **React**, **TypeScript** y **Vite**. La aplicación consume una API real de productos, gestiona un carrito de compras persistente y cuenta con un flujo de checkout con validación bancaria estricta.
+¡Bienvenido! Este proyecto es una plataforma de comercio electrónico moderna, rápida y completamente tipada, construida con **React**, **TypeScript** y **Vite**.
+
+> _Demo en Vivo:_ [Visita la aplicación desplegada aquí](https://sallygongar-ecommerce.vercel.app/)
+
+La aplicación consume una API real de productos, gestiona un carrito de compras persistente y cuenta con un flujo de checkout con validación bancaria estricta.
 
 Desarrollado aplicando buenas prácticas de arquitectura de software, separación de responsabilidades mediante Custom Hooks y modularización de estilos.
 
