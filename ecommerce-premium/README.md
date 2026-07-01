@@ -1,75 +1,69 @@
-# React + TypeScript + Vite
+# 🚀 TS/React E-Commerce con Pasarela de Pago Simulada
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+¡Bienvenido! Este proyecto es una plataforma de comercio electrónico moderna, rápida y completamente tipada, construida con **React**, **TypeScript** y **Vite**. La aplicación consume una API real de productos, gestiona un carrito de compras persistente y cuenta con un flujo de checkout con validación bancaria estricta.
 
-Currently, two official plugins are available:
+Desarrollado aplicando buenas prácticas de arquitectura de software, separación de responsabilidades mediante Custom Hooks y modularización de estilos.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🛠️ Tecnologías y Herramientas
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+El proyecto está construido sobre el ecosistema moderno de React:
 
-Note: This will impact Vite dev & build performances.
+- **Core:** [React 18+](https://react.dev/) + [Vite](https://vitejs.dev/) (para un entorno de desarrollo ultra rápido).
+- **Lenguaje:** [TypeScript](https://www.typescriptlang.org/) (Tipado estricto y contratos de datos robustos).
+- **Estado Global:** [Zustand](https://zustand-demo.pmnd.rs/) + Middleware de persistencia para el carrito de compras.
+- **Enrutamiento:** [React Router Dom](https://reactrouter.com/) (Navegación fluida de SPA).
+- **Formularios y Validación:** [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/) (Validación síncrona en cliente).
+- **Estilos:** [Sass Modules](https://sass-lang.com/) (Estilos encapsulados por componente para evitar colisiones).
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 💡 Características Clave de la Lógica
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Para destacar este repositorio, me enfoqué en resolver problemas del mundo real en el desarrollo frontend:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1.  **Arquitectura Basada en Hooks:** La lógica de consumo asíncrono, control de estados de carga (`loading`) y manejo de errores (`error`) está totalmente aislada de la interfaz visual mediante el Custom Hook `useProducts`.
+2.  **Estado Global Optimizado:** El carrito de compras no produce _re-renders_ masivos en la aplicación gracias al sistema de selectores de Zustand.
+3.  **Persistencia Automática:** El estado del carrito sobrevive a recargas de página (F5) o cierres de pestaña mediante la sincronización automática con el `LocalStorage`.
+4.  **Simulación de Pasarela Bancaria:** El formulario de _Checkout_ valida estructuras complejas de tarjetas (16 dígitos, formato MM/YY, CVV) y simula la latencia de una petición de red con estados asíncronos antes de confirmar la compra.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## 📁 Estructura del Proyecto
+
+La arquitectura de carpetas sigue un orden modular y escalable:
+
+```text
+src/
+├── components/      # Componentes visuales reutilizables (Navbar, etc.)
+├── hooks/           # Lógica asíncrona aislada (useProducts)
+├── pages/           # Vistas principales (Home, Cart, Checkout, Success)
+├── store/           # Estado global con Zustand (useCartStore)
+├── styles/          # Variables globales de Sass y estilos base
+└── types/           # Interfaces y tipos estrictos de TypeScript
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🚀 Instalación y Uso Local
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Sigue estos pasos para clonar y ejecutar el e-commerce en tu máquina local:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Clonar el repositorio:
+
+git clone [https://github.com/sallygongar/react-advanced-apps/tree/main/ecommerce-premium](https://github.com/sagongar/ecommerce-premium.git)
+cd TU-REPOSITORIO
+
+## 2. Instalar dependencias:
+
+npm install
+
+## 3. Iniciar el servidor de desarrollo:
+
+npm run dev
+
+## 4. Compilar para producción (Build):
+
+npm run build
+
+📄 Licencia
+Este proyecto es de código abierto y está disponible bajo la Licencia MIT.
