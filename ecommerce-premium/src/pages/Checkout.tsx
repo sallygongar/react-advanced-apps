@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useCartStore } from "../hooks/useCartStore";
 
+import styles from "../styles/_checkout.module.scss"; // Importamos el Sass Module
+
 // 1. Creamos el esquema con las reglas de negocio
 const checkoutSchema = z.object({
   fullName: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
@@ -60,7 +62,7 @@ export const Checkout = () => {
   // Si el carrito está vacío, invitamos al usuario a comprar en lugar de mostrar el formulario
   if (totalPrice === 0) {
     return (
-      <div style={{ padding: "20px", textAlign: "center" }}>
+      <div className={styles.emptyCartMessage}>
         <h3>Tu carrito está vacío</h3>
         <p>Agrega productos para poder proceder al pago.</p>
       </div>
@@ -68,124 +70,85 @@ export const Checkout = () => {
   }
 
   return (
-    <div
-      style={{
-        maxWidth: "500px",
-        margin: "40px auto",
-        padding: "20px",
-        border: "1px solid #eee",
-        borderRadius: "8px",
-      }}
-    >
+    <div className={styles.card}>
       <h2>Pasarela de Pago Seguro</h2>
-      <p style={{ fontWeight: "bold", fontSize: "1.2rem" }}>
-        Total a pagar: ${totalPrice.toFixed(2)}
-      </p>
+      <p className={styles.total}>Total a pagar: ${totalPrice.toFixed(2)}</p>
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        style={{ display: "flex", flexDirection: "column", gap: "15px" }}
-      >
-        <div>
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+        <div className={styles.formGroup}>
           <input
             {...register("fullName")}
             placeholder="Nombre completo en la tarjeta"
-            style={{ width: "100%", padding: "8px" }}
+            className={styles.input}
           />
           {errors.fullName && (
-            <p style={{ color: "red", margin: "4px 0 0", fontSize: "0.85rem" }}>
-              {errors.fullName.message}
-            </p>
+            <p className={styles.error}>{errors.fullName.message}</p>
           )}
         </div>
 
-        <div>
+        <div className={styles.formGroup}>
           <input
             {...register("email")}
             placeholder="Correo electrónico"
-            style={{ width: "100%", padding: "8px" }}
+            className={styles.input}
           />
           {errors.email && (
-            <p style={{ color: "red", margin: "4px 0 0", fontSize: "0.85rem" }}>
-              {errors.email.message}
-            </p>
+            <p className={styles.error}>{errors.email.message}</p>
           )}
         </div>
 
-        <div>
+        <div className={styles.formGroup}>
           <input
             {...register("address")}
             placeholder="Dirección de envío completa"
-            style={{ width: "100%", padding: "8px" }}
+            className={styles.input}
           />
           {errors.address && (
-            <p style={{ color: "red", margin: "4px 0 0", fontSize: "0.85rem" }}>
-              {errors.address.message}
-            </p>
+            <p className={styles.error}>{errors.address.message}</p>
           )}
         </div>
 
-        <div>
+        <div className={styles.formGroup}>
           <input
             {...register("cardNumber")}
             placeholder="Número de tarjeta (16 dígitos)"
             maxLength={16}
-            style={{ width: "100%", padding: "8px" }}
+            className={styles.input}
           />
           {errors.cardNumber && (
-            <p style={{ color: "red", margin: "4px 0 0", fontSize: "0.85rem" }}>
-              {errors.cardNumber.message}
-            </p>
+            <p className={styles.error}>{errors.cardNumber.message}</p>
           )}
         </div>
 
-        <div style={{ display: "flex", gap: "10px" }}>
-          <div style={{ flex: 1 }}>
+        <div className={styles.row}>
+          <div className={styles.formGroup}>
             <input
               {...register("expiryDate")}
               placeholder="MM/YY"
               maxLength={5}
-              style={{ width: "100%", padding: "8px" }}
+              className={styles.input}
             />
             {errors.expiryDate && (
-              <p
-                style={{ color: "red", margin: "4px 0 0", fontSize: "0.85rem" }}
-              >
-                {errors.expiryDate.message}
-              </p>
+              <p className={styles.error}>{errors.expiryDate.message}</p>
             )}
           </div>
 
-          <div style={{ flex: 1 }}>
+          <div className={styles.formGroup}>
             <input
               {...register("cvv")}
               placeholder="CVV"
               maxLength={4}
               type="password"
-              style={{ width: "100%", padding: "8px" }}
+              className={styles.input}
             />
-            {errors.cvv && (
-              <p
-                style={{ color: "red", margin: "4px 0 0", fontSize: "0.85rem" }}
-              >
-                {errors.cvv.message}
-              </p>
-            )}
+            {errors.cvv && <p className={styles.error}>{errors.cvv.message}</p>}
           </div>
         </div>
 
         <button
           type="submit"
           disabled={isProcessing}
-          style={{
-            padding: "12px",
-            background: "#16a34a",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
+          className={styles.submitButton}
         >
           {isProcessing
             ? "Conectando con el banco seguro..."

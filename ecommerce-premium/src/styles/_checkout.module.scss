@@ -1,0 +1,92 @@
+.card {
+  max-width: 450px;
+  margin: 40px auto;
+  padding: 25px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-family: sans-serif;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  background: white;
+
+  h2 {
+    margin-top: 0;
+    color: #1e293b;
+  }
+}
+
+.total {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: #2563eb;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+
+  & > div {
+    flex: 1;
+  }
+}
+
+.input {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #2563eb;
+  }
+}
+
+.error {
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin: 4px 0 0;
+}
+
+.submitButton {
+  padding: 12px;
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  margin-top: 10px;
+  transition: background 0.2s ease;
+
+  &:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    background: #15803d;
+  }
+}
+
+.emptyCartMessage {
+  padding: 40px;
+  text-align: center;
+  font-family: sans-serif;
+  color: #64748b;
+}
