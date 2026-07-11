@@ -1,3 +1,5 @@
+@use "variables" as v;
+
 .container {
   padding: 30px;
   font-family: sans-serif;
@@ -14,13 +16,13 @@
 }
 
 .card {
-  border: 1px solid #e2e8f0;
+  border: 1px solid v.$color-text-6;
   padding: 20px;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background: white;
+  background: v.$bg-color-white;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 
   img {
@@ -35,11 +37,12 @@
     margin-bottom: 10px;
     height: 45px;
     overflow: hidden;
+    color: v.$color-text;
   }
 
   .price {
     font-weight: bold;
-    color: #2563eb;
+    color: v.$bg-color-primary;
     font-size: 1.2rem;
     margin-bottom: 15px;
   }
@@ -47,8 +50,8 @@
   button {
     width: 100%;
     padding: 10px;
-    background: #2563eb;
-    color: white;
+    background: v.$bg-color-primary;
+    color: v.$color-white;
     border: none;
     border-radius: 6px;
     cursor: pointer;
@@ -56,7 +59,7 @@
     transition: background 0.2s ease;
 
     &:hover {
-      background: #1d4ed8; // Un azul un poco más oscuro al pasar el cursor
+      background: v.$bg-color-secondary;
     }
   }
 }

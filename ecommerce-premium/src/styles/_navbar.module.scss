@@ -1,0 +1,20 @@
+@use "variables" as v;
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  background: v.$bg-color-primary;
+  color: v.$color-secondary;
+
+  .link {
+    color: v.$color-secondary;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .link_cart {
+    color: v.$color-secondary;
+    text-decoration: none;
+  }
+}

@@ -1,12 +1,14 @@
+@use "variables" as v;
+
 .card {
   max-width: 450px;
   margin: 40px auto;
   padding: 25px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid v.$color-text-6;
   border-radius: 12px;
   font-family: sans-serif;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  background: white;
+  background: v.$bg-color-white;
 
   h2 {
     margin-top: 0;
@@ -18,7 +20,7 @@
   font-weight: bold;
   font-size: 1.2rem;
   margin-bottom: 20px;
-  color: #2563eb;
+  color: v.$bg-color-primary;
 }
 
 .form {
@@ -46,26 +48,26 @@
   padding: 10px;
   box-sizing: border-box;
   border-radius: 6px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid v.$color-text-7;
   font-size: 1rem;
   transition: border-color 0.2s ease;
 
   &:focus {
     outline: none;
-    border-color: #2563eb;
+    border-color: v.$bg-color-primary;
   }
 }
 
 .error {
-  color: #ef4444;
+  color: v.$color-text-4;
   font-size: 0.85rem;
   margin: 4px 0 0;
 }
 
 .submitButton {
   padding: 12px;
-  background: #16a34a;
-  color: white;
+  background: v.$bg-color-primary;
+  color: v.$color-white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -80,7 +82,7 @@
   }
 
   &:not(:disabled):hover {
-    background: #15803d;
+    background: v.$bg-color-secondary;
   }
 }
 
@@ -88,5 +90,5 @@
   padding: 40px;
   text-align: center;
   font-family: sans-serif;
-  color: #64748b;
+  color: v.$color-text-2;
 }
