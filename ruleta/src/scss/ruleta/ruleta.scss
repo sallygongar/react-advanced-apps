@@ -1,0 +1,30 @@
+.ruleta {
+  display: flex;
+  padding: 20px;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+
+  .ruleta_left_wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    .ruleta_circle {
+      width: 40px;
+      height: 40px;
+      background-color: white;
+      position: absolute;
+      border-radius: 50%;
+      z-index: 2;
+    }
+    .ruleta_ping {
+      position: absolute;
+      right: -10px;
+      top: 70px;
+      width: 45px;
+      height: 45px;
+      transform: rotate(50deg);
+    }
+  }
+}

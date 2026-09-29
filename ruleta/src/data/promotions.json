@@ -1,0 +1,50 @@
+[
+  {
+    "description": "*30%*\nen protectores\n*solares*",
+    "code": "30PAHU",
+    "probability": 0.2,
+    "isWin": true
+  },
+  {
+    "description": "*Sigue*\nParticipando",
+    "code": "NOGANASTE",
+    "probability": 0.2,
+    "isWin": false
+  },
+  {
+    "description": "*5%*\nen\n*Macarillas*",
+    "code": "5ELINBA",
+    "probability": 0.15,
+    "isWin": true
+  },
+  {
+    "description": "*Envio*\nGratis",
+    "code": "ENVIGRAT",
+    "probability": 0.15,
+    "isWin": true
+  },
+  {
+    "description": "*20%*\nen todos\nlos faciales",
+    "code": "20ETTENDA",
+    "probability": 0.1,
+    "isWin": true
+  },
+  {
+    "description": "*Sigue*\nParticipando",
+    "code": "NOGANASTE",
+    "probability": 0.1,
+    "isWin": false
+  },
+  {
+    "description": "*10%*\nen toda\n la tienda",
+    "code": "2x1SUEROX",
+    "probability": 0.05,
+    "isWin": true
+  },
+  {
+    "description": "*4%*\nen cremas\n*hidratantes*",
+    "code": "4CRISTAHG",
+    "probability": 0.05,
+    "isWin": true
+  }
+]

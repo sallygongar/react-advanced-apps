@@ -1,3 +1,7 @@
 @use "./scss/abstracts/variables";
+
+/*base*/
 @use "./scss/base/base";
 @use "./scss/base/reset";
+
+@use "./scss/ruleta/ruleta.scss";
