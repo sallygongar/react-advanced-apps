@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import type { CanvasContext } from "../../types/wheel";
-import ping from "../../assets/images/ping.png";
+import type { Canvas, CanvasContext } from "../../types/wheel";
+import ping from "../../assets/images/ping-svg-2.svg";
 import { isMobile } from "react-device-detect";
 import type { PromotionItem } from "../../types/wheel";
 import { useRouletteHook } from "../../context/roulette/UseRouletteHook";
@@ -17,49 +17,62 @@ const Wheel = () => {
     isDone,
     sessionPrize,
   } = useRouletteHook();
-  //console.log(promotions, "<<<< promotions");
+
   // Función para dibujar un segmento individual
-  const drawSegment = (
+  const drawWheel = (
+    canvas: Canvas,
     context: CanvasContext,
     index: number,
     totalSegments: number,
-    centerX: number,
-    centerY: number,
+    centerX: any,
+    centerY: any,
     radio: number,
   ) => {
-    if (!context || !promotions[index]) return;
+    if (!context) return;
+    if (!canvas) return;
 
-    const arcSize = (2 * Math.PI) / totalSegments;
-    const startAngle = index * arcSize;
-    const endAngle = startAngle + arcSize;
+    const startAngle = (index * 2 * Math.PI) / totalSegments;
+    const endAngle = ((index + 1) * 2 * Math.PI) / totalSegments;
 
     // 1. Dibujar Rebanada
     context.beginPath();
+    //context.arc(centerX, centerY, radio, startAngle, endAngle);
+
+    // Traza un arco (una porción del círculo)
     context.arc(centerX, centerY, radio, startAngle, endAngle);
+
+    // Cierra el arco al centro, creando una "rebanada"
     context.lineTo(centerX, centerY);
 
+    //Configura el estilo del borde y lo dibuja
     context.lineWidth = 8;
-    context.strokeStyle = "#DB061C";
+    context.strokeStyle = "#37BAED";
     context.stroke();
 
+    //Rellena el segmento con un color
     context.fillStyle = index % 2 === 0 ? colors[0] : colors[1];
     context.fill();
 
-    // 2. Dibujar Texto Radial
+    // // Transforma el contexto para preparar la escritura de texto
     context.save();
     context.translate(centerX, centerY);
     // Rota hacia el centro de la rebanada actual
-    context.rotate(startAngle + arcSize / 2);
+    context.rotate(
+      (3 * 2 * Math.PI) / (totalSegments * totalSegments) +
+        (index * 2 * Math.PI) / totalSegments,
+    );
 
-    context.textAlign = "right";
-    context.textBaseline = "middle";
+    context.translate(-centerX, -centerY);
+    context.textAlign = "center";
+    context.textBaseline = "top";
     context.fillStyle = index % 2 === 0 ? "#111" : "#fff";
 
     const textPromotion = promotions[index].description;
     // Ubicar el texto a un 80% del radio desde el centro
-    const textDistance = radio * 0.8;
+    const valueX = (centerX / 2) * 3.2;
+    const valueY = centerY - 10;
 
-    drawText(context, textPromotion, textDistance, 0);
+    drawText(context, textPromotion, valueX, valueY);
     context.restore();
   };
 
@@ -78,7 +91,7 @@ const Wheel = () => {
     lines.forEach((line) => {
       const cleanLine = line.replace(/\*/g, "");
       context.fillText(cleanLine, x, y + yOffset);
-      yOffset += 16;
+      yOffset += 15;
     });
   }
 
@@ -101,8 +114,8 @@ const Wheel = () => {
   // Renderizado del Canvas
   useEffect(() => {
     const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     // Limpiar canvas antes de redibujar
@@ -115,7 +128,7 @@ const Wheel = () => {
 
     if (totalSegments > 0) {
       for (let i = 0; i < totalSegments; i++) {
-        drawSegment(ctx, i, totalSegments, centerX, centerY, radio);
+        drawWheel(canvas, ctx, i, totalSegments, centerX, centerY, radio);
       }
     }
   }, [promotions, colors]);

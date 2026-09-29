@@ -7,7 +7,7 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
   const [colors, setColors] = useState<string[]>([]);
 
   useEffect(() => {
-    setColors(["#fff", "#F5276C"]);
+    setColors(["#fff", "#37BAED"]); // 37BAED  ,175C1D
   }, []);
 
   const promotions: PromotionItem[] = useMemo(() => {

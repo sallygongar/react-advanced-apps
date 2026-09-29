@@ -1,6 +1,6 @@
 [
   {
-    "description": "*30%*\nen pañales\n*Huggies*",
+    "description": "*30%*\nen protectores\n*solares*",
     "code": "30PAHU",
     "probability": 0.2,
     "isWin": true
@@ -12,7 +12,7 @@
     "isWin": false
   },
   {
-    "description": "*5%*\nen Linea\n*Blanca*",
+    "description": "*5%*\nen\n*Macarillas*",
     "code": "5ELINBA",
     "probability": 0.15,
     "isWin": true
@@ -24,7 +24,7 @@
     "isWin": true
   },
   {
-    "description": "*20%*\nen toda\nla tienda",
+    "description": "*20%*\nen todos\nlos faciales",
     "code": "20ETTENDA",
     "probability": 0.1,
     "isWin": true
@@ -36,13 +36,13 @@
     "isWin": false
   },
   {
-    "description": "*2 x 1*\nen suerox",
+    "description": "*10%*\nen toda\n la tienda",
     "code": "2x1SUEROX",
     "probability": 0.05,
     "isWin": true
   },
   {
-    "description": "*4%*\nen Cristaleria\n*Hogar*",
+    "description": "*4%*\nen cremas\n*hidratantes*",
     "code": "4CRISTAHG",
     "probability": 0.05,
     "isWin": true

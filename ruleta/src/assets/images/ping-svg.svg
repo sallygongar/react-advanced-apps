@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Máscara para recortar la sombra exacta dentro de la cabeza del pin -->
+    <clipPath id="head-clip">
+      <circle cx="256" cy="208" r="160" />
+    </clipPath>
+  </defs>
+
+  <!-- 1. Cuerpo Principal (Gota completa con punta redondeada) -->
+  <path d="M 256 48 
+           C 167.6 48, 96 119.6, 96 208 
+           C 96 264.8, 125.6 314.7, 170.2 343.3 
+           L 242.8 452.4 
+           C 249.8 462.9, 262.2 462.9, 269.2 452.4 
+           L 341.8 343.3 
+           C 386.4 314.7, 416 264.8, 416 208 
+           C 416 119.6, 344.4 48, 256 48 Z" 
+        fill="#175C1D" />
+
+  <!-- 2. Sombra Oscura Lateral (Creciente interna curva exacta de la imagen) -->
+  <path d="M 256 48 
+           A 160 160 0 0 1 416 208 
+           A 160 160 0 0 1 341.8 343.3 
+           C 270 310, 240 210, 310 100 
+           C 340 50, 300 48, 256 48 Z" 
+        fill="#0D3B12" 
+        opacity="0.45" 
+        clip-path="url(#head-clip)" />
+
+  <!-- 3. Círculo Interior Gris Claro (Posicionado en la mitad superior) -->
+  <circle cx="256" cy="200" r="88" fill="#EBF0EC" />
+
+  <!-- 4. Sombra Diagonal Creciente dentro del círculo claro -->
+  <path d="M 220 120 
+           A 88 88 0 0 1 344 200 
+           A 88 88 0 0 1 310 265 
+           C 260 250, 230 180, 220 120 Z" 
+        fill="#C8D6CA" />
+</svg>
