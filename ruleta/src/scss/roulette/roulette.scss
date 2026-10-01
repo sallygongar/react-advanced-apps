@@ -1,0 +1,40 @@
+.roulette-playground {
+  display: flex;
+  padding: 20px;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+
+  .roulette-left__wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  .roulette-right__wrapper {
+    display: flex;
+  }
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+// ==========================================
+// Elementos Visuales de la Ruleta
+// ==========================================
+.roulette-circle {
+  width: 40px;
+  height: 40px;
+  background-color: white;
+  position: absolute;
+  border-radius: 50%;
+  z-index: 2;
+}
+.roulette-ping {
+  position: absolute;
+  right: -10px;
+  top: 70px;
+  width: 45px;
+  height: 45px;
+  transform: rotate(50deg);
+}

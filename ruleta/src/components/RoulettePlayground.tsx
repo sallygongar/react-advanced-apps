@@ -1,9 +1,11 @@
 import Wheel from "./wheel/Wheel";
+import RouletteGamePanel from "./RouletteGamePanel";
 
 const RoulettePlayground = () => {
   return (
-    <div className="ruleta">
+    <div className="roulette-playground">
       <Wheel />
+      <RouletteGamePanel />
     </div>
   );
 };
