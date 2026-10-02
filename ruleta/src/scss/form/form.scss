@@ -1,0 +1,93 @@
+// ==========================================
+// Componente de Formulario
+// ==========================================
+
+.roulette-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 400px;
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+
+    @media (max-width: 768px) {
+      text-align: center;
+    }
+  }
+  &__description {
+    font-size: 0.95rem;
+    color: #666666;
+    margin: 0;
+    @media (max-width: 768px) {
+      text-align: center;
+    }
+  }
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  &__input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+
+    &:focus {
+      border-color: #37baed;
+    }
+  }
+  &__error-banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #fff0f0;
+    border: 1px solid #ffcdd2;
+    padding: 8px 12px;
+    border-radius: 6px;
+  }
+  &__error-icon {
+    display: flex;
+    align-items: center;
+
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  &__error-message {
+    color: #d32f2f;
+    font-size: 0.85rem;
+  }
+  &__button {
+    width: 100%;
+    padding: 12px;
+    background-color: #37baed;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #3fb3e0;
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+}

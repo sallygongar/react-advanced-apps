@@ -3,7 +3,7 @@ import type { Canvas, CanvasContext } from "../../types/wheel";
 import ping from "../../assets/images/ping-svg-2.svg";
 import { isMobile } from "react-device-detect";
 import type { PromotionItem } from "../../types/wheel";
-import { useRouletteHook } from "../../context/roulette/UseRouletteHook";
+import { useRouletteHook } from "../../context/roulette/useRouletteHook";
 
 const Wheel = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -175,10 +175,10 @@ const Wheel = () => {
   }, [sessionPrize, promotions]);
 
   return (
-    <div className="ruleta_left_wrapper">
-      <div className="ruleta_circle"></div>
+    <div className="roulette-left__wrapper">
+      <div className="roulette-circle"></div>
       <div
-        className={`ruleta_ping ${isSpinning ? "ruleta_animated_ping" : ""}`}
+        className={`roulette-ping ${isSpinning ? "roulette-animated__ping" : ""}`}
       >
         <img src={ping} alt="ping" width="100%" />
       </div>

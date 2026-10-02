@@ -1,0 +1,76 @@
+.custom-checkbox {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  gap: 5px;
+
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
+
+  // Ocultar el input nativo pero mantener accesibilidad si se navega con teclado
+  &__input {
+    display: none;
+
+    &:checked + .custom-checkbox__symbol {
+      background-color: #37baed;
+      border-color: #37baed;
+
+      &::after {
+        opacity: 1;
+      }
+    }
+  }
+
+  // Cuadro visual del checkbox
+  &__symbol {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #888;
+    border-radius: 4px;
+    display: inline-block;
+    position: relative;
+    flex-shrink: 0; // Evita que se deforme si el texto es muy largo
+    transition:
+      background-color 0.3s,
+      border-color 0.3s;
+
+    // Marca de verificación (Check mark)
+    &::after {
+      content: "";
+      position: absolute;
+      width: 5px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      left: 4px;
+      top: 1px;
+      transform: rotate(45deg);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+  }
+
+  // Texto/Label y enlaces internos
+  &__text {
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    color: #333;
+
+    a {
+      color: #37baed;
+      text-decoration: underline;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+
+  // Modificador opcional para estado deshabilitado
+  &--disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
