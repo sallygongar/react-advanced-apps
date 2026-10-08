@@ -12,6 +12,7 @@ interface RouletteContextProps extends RouletteProps {
   promotion?: PromotionItem | null;
   prize?: PrizeData | null;
   sessionPrize?: PrizeData | null;
+  isFinished?: boolean;
 }
 
 const RouletteContext = createContext<RouletteContextProps | null>(null);
