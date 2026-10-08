@@ -7,9 +7,9 @@ const RouletteGamePanel = () => {
   return (
     <div className="roulette-right__wrapper">
       {isFinished && prize ? (
-        <RouletteRegistrationForm />
-      ) : (
         <RouletteResultCard />
+      ) : (
+        <RouletteRegistrationForm />
       )}
     </div>
   );
