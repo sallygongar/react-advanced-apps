@@ -45,7 +45,7 @@ canvas {
   height: auto !important; /* Mantiene la proporción de aspecto */
   display: block;
   margin: 0 auto;
-  background-color: #fff !important;
+  background-color: transparent !important;
 }
 
 // ==========================================
@@ -69,5 +69,18 @@ canvas {
   @media (min-width: 768px) {
     right: 15px;
     top: 70px;
+  }
+}
+
+.roulette-animated__ping {
+  animation: animation_ping 0.1s linear 85 0.2s;
+}
+
+@keyframes animation_ping {
+  0% {
+    transform: rotate(45deg);
+  }
+  100% {
+    transform: rotate(55deg);
   }
 }

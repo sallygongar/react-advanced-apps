@@ -4,15 +4,15 @@ import type {
   PromotionItem,
   RouletteProps,
 } from "../../types/wheel";
+import type { RouletteActions } from "../../types/rouletteActions";
 
-interface RouletteContextProps extends RouletteProps {
+interface RouletteContextProps extends RouletteProps, RouletteActions {
   isSpinning?: boolean;
-  degreeToFall?: number;
-  isDone?: boolean;
   promotion?: PromotionItem | null;
   prize?: PrizeData | null;
   sessionPrize?: PrizeData | null;
   isFinished?: boolean;
+  rotationDegree?: number;
 }
 
 const RouletteContext = createContext<RouletteContextProps | null>(null);
