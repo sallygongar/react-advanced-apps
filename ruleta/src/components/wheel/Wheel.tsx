@@ -57,9 +57,8 @@ const Wheel = () => {
     context.fillStyle = index % 2 === 0 ? "#111" : "#fff";
 
     const textPromotion = promotions[index].description;
-    // Ubicar el texto a un 80% del radio desde el centro
-    //const valueX = (centerX / 2) * 3.2;
-    //const valueY = centerY - 10;
+
+    // Ubicar el texto
     const textDistance = radio * 0.65;
 
     drawText(context, textPromotion, textDistance, 0);

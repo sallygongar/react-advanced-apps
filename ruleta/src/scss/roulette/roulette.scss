@@ -71,3 +71,16 @@ canvas {
     top: 70px;
   }
 }
+
+.roulette-animated__ping {
+  animation: animation_ping 0.1s linear 85 0.2s;
+}
+
+@keyframes animation_ping {
+  0% {
+    transform: rotate(45deg);
+  }
+  100% {
+    transform: rotate(55deg);
+  }
+}
