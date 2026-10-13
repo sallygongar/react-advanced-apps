@@ -8,12 +8,12 @@ const RouletteResultCard = () => {
   return (
     <div className="roulette-result">
       {prize?.isWin ? (
-        <RouletteNoPrizeCard />
-      ) : (
         <RouletteWinnerCard
           code={prize?.code}
           description={prize?.description}
         />
+      ) : (
+        <RouletteNoPrizeCard />
       )}
     </div>
   );

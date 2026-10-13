@@ -13,6 +13,7 @@ export interface PrizeData {
   description?: string;
   code?: string;
   isWin?: boolean;
+  winningDegree?: number; // Para posicionar la ruleta en el premio
 }
 
 export interface RouletteProps {

@@ -9,12 +9,13 @@ const RouletteRegistrationForm = () => {
     onTermsChange,
     onInputChange,
     onValidateForm,
+    playRoulette,
   } = useRouletteForm();
 
   const handleSubmit = () => {
     const isValid = onValidateForm?.();
     if (isValid) {
-      console.log("Jugar ruleta");
+      playRoulette?.();
     }
   };
 

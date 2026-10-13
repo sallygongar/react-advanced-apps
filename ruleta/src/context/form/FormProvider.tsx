@@ -1,8 +1,10 @@
 import { useState, type ChangeEvent, type ReactNode } from "react";
 import FormContext from "./FormContext";
 import type { FormErrors, FormInputs } from "../../types/form";
+import { useRouletteHook } from "../roulette/useRouletteHook";
 
 export const FormProvider = ({ children }: { children: ReactNode }) => {
+  const { playRoulette } = useRouletteHook();
   const [inputs, setInputs] = useState<FormInputs>({
     email: "",
   });
@@ -57,6 +59,7 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
         onTermsChange,
         onValidateForm,
         onClearForm,
+        playRoulette,
       }}
     >
       {children}
