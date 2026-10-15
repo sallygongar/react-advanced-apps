@@ -80,7 +80,10 @@ const RouletteWinnerCard = ({
 
       {/* Footer */}
       <div className="roulette-result__footer">
-        <a className="roulette-result__action-btn" href="/">
+        <a
+          className="roulette-result__action-btn"
+          href="https://sallygongar-ecommerce.vercel.app/"
+        >
           Ver Productos
         </a>
       </div>
