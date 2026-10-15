@@ -11,6 +11,9 @@
     color: v.$color-secondary;
     text-decoration: none;
     font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
   }
 
   .link_cart {
