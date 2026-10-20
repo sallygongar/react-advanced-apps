@@ -7,7 +7,8 @@ import { useRouletteHook } from "../../context/roulette/useRouletteHook";
 const Wheel = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  const { promotions, colors, isSpinning, rotationDegree } = useRouletteHook();
+  const { promotions, colors, isSpinning, rotationDegree, loading, error } =
+    useRouletteHook();
 
   // Función para dibujar un segmento individual
   const drawWheel = (
@@ -94,9 +95,33 @@ const Wheel = () => {
     // Limpiar canvas antes de redibujar
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const totalSegments = promotions.length;
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
+
+    // 1. Caso de Carga: Dibujar mensaje "Cargando..."
+    if (loading) {
+      ctx.font = "600 14px Montserrat";
+      ctx.fillStyle = "#37BAED";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("Cargando premios...", centerX, centerY);
+      return;
+    }
+
+    // 2. Caso de Error: Dibujar mensaje de error en el centro del Canvas
+    if (error) {
+      ctx.font = "600 12px Montserrat";
+      ctx.fillStyle = "#E53E3E"; // Color rojo de advertencia
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("Error al cargar la ruleta", centerX, centerY - 10);
+      ctx.font = "400 10px Montserrat";
+      ctx.fillStyle = "#718096";
+      ctx.fillText("Intenta recargar la página", centerX, centerY + 10);
+      return;
+    }
+
+    const totalSegments = promotions.length;
     const radio = isMobile ? 160 : 170;
 
     if (totalSegments > 0) {
@@ -104,7 +129,7 @@ const Wheel = () => {
         drawWheel(canvas, ctx, i, totalSegments, centerX, centerY, radio);
       }
     }
-  }, [promotions, colors]);
+  }, [promotions, colors, loading, error]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -119,12 +144,16 @@ const Wheel = () => {
 
   return (
     <div className="roulette-left__wrapper">
-      <div className="roulette-circle"></div>
-      <div
-        className={`roulette-ping ${isSpinning ? "roulette-animated__ping" : ""}`}
-      >
-        <img src={ping} alt="ping" width="100%" />
-      </div>
+      {!loading && (
+        <>
+          <div className="roulette-circle"></div>
+          <div
+            className={`roulette-ping ${isSpinning ? "roulette-animated__ping" : ""}`}
+          >
+            <img src={ping} alt="ping" width="100%" />
+          </div>
+        </>
+      )}
       <canvas ref={canvasRef} width={375} height={375}></canvas>
     </div>
   );

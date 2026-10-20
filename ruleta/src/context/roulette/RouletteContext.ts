@@ -13,6 +13,8 @@ interface RouletteContextProps extends RouletteProps, RouletteActions {
   sessionPrize?: PrizeData | null;
   isFinished?: boolean;
   rotationDegree?: number;
+  loading?: boolean;
+  error?: string | null;
 }
 
 const RouletteContext = createContext<RouletteContextProps | null>(null);

@@ -1,13 +1,15 @@
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 import RouletteContext from "./RouletteContext";
 import type { PromotionItem, PrizeData } from "../../types/wheel";
-import promotionsList from "../../data/promotions.json";
 
 const STORAGE_KEY = "roulette_prize_result";
 
 export const RouletteProvider = ({ children }: { children: ReactNode }) => {
   const [colors, setColors] = useState<string[]>([]);
   const [isSpinning, setIsSpinning] = useState<boolean>(false);
+  const [rawPrizes, setRawPrizes] = useState<PromotionItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [prize, setPrize] = useState<PrizeData | null>(() => {
     const savedPrize = localStorage.getItem(STORAGE_KEY);
@@ -29,17 +31,44 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
     return 0;
   });
 
+  // 1. Obtenemos los premios activos desde la API al cargar el componente
+  useEffect(() => {
+    setLoading(true);
+
+    // Puedes cambiar 'CYBER' por una variable si la manejas dinámicamente
+    fetch("/api/prizes?eventType=CYBER")
+      .then((res) => {
+        if (!res.ok) throw new Error("Error al obtener la lista de premios");
+        return res.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          console.log(data);
+          setRawPrizes(data.prizes);
+        } else {
+          setError(data.error || "No se pudieron cargar los premios");
+        }
+      })
+      .catch((err) => {
+        console.error("❌ Error cargando premios:", err);
+        setError(err.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
   useEffect(() => {
     setColors(["#fff", "#37BAED"]); // 37BAED  ,175C1D
   }, []);
 
   const promotions: PromotionItem[] = useMemo(() => {
-    const total = promotionsList.length;
+    const total = rawPrizes.length;
     if (total === 0) return [];
 
     const segmentAngle = 360 / total;
 
-    return promotionsList.map((item, index) => {
+    return rawPrizes.map((item, index) => {
       const startDegree = index * segmentAngle;
       const endDegree = startDegree + segmentAngle;
       const centerDegree = startDegree + segmentAngle / 2;
@@ -50,7 +79,7 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
         grade: centerDegree,
       };
     });
-  }, [promotionsList]);
+  }, [rawPrizes]);
 
   // Función auxiliar para calcular los grados de rotación
   function calculateFinalRotation(
@@ -107,6 +136,8 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
         isSpinning,
         isFinished,
         rotationDegree,
+        loading,
+        error,
         playRoulette,
       }}
     >
