@@ -10,6 +10,7 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
   const [rawPrizes, setRawPrizes] = useState<PromotionItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string>("");
 
   const [prize, setPrize] = useState<PrizeData | null>(() => {
     const savedPrize = localStorage.getItem(STORAGE_KEY);
@@ -43,7 +44,6 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
       })
       .then((data) => {
         if (data.success) {
-          console.log(data);
           setRawPrizes(data.prizes);
         } else {
           setError(data.error || "No se pudieron cargar los premios");
@@ -98,15 +98,18 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
 
   function playRoulette() {
     if (isSpinning || isFinished) return;
+
     setIsSpinning(true);
     const randomIndex = Math.floor(Math.random() * promotions.length);
     const selectedPromotion = promotions[randomIndex];
 
     const resultPrize: PrizeData = {
-      isWin: selectedPromotion.isWin,
-      code: selectedPromotion.code || "CUPON2026",
-      description: selectedPromotion.description || "Premio obtenido",
-      winningDegree: selectedPromotion.grade,
+      id: selectedPromotion?.id,
+      isWin: selectedPromotion?.isWin,
+      code: selectedPromotion?.code,
+      description: selectedPromotion?.description,
+      winningDegree: selectedPromotion?.grade,
+      event_type: selectedPromotion?.event_type,
     };
 
     // 2. Calcular los grados finales de rotación (5 giros + ángulo del premio)
@@ -124,6 +127,36 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
 
       // Guardar en localStorage para que persista al recargar
       localStorage.setItem(STORAGE_KEY, JSON.stringify(resultPrize));
+
+      (async () => {
+        try {
+          const response = await fetch("/api/save-winner", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: userEmail,
+              code: resultPrize.code,
+              description: resultPrize.description,
+              winningDegree: resultPrize.winningDegree,
+              isWin: resultPrize.isWin,
+              prize_id: resultPrize.id,
+              event_type: resultPrize.event_type,
+            }),
+          });
+
+          const data = await response.json();
+          if (data.success) {
+            console.log(
+              "🎉 ¡Ganador guardado con éxito en Supabase!",
+              data.winner,
+            );
+          } else {
+            console.error("❌ Error al guardar en Supabase:", data.error);
+          }
+        } catch (error) {
+          console.error("❌ Error de red al intentar guardar:", error);
+        }
+      })();
     }, 4000);
   }
 
@@ -138,6 +171,8 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
         rotationDegree,
         loading,
         error,
+        email: userEmail,
+        setUserEmail,
         playRoulette,
       }}
     >

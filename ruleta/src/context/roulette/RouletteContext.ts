@@ -5,8 +5,10 @@ import type {
   RouletteProps,
 } from "../../types/wheel";
 import type { RouletteActions } from "../../types/rouletteActions";
+import type { FormInputs } from "../../types/form";
 
-interface RouletteContextProps extends RouletteProps, RouletteActions {
+interface RouletteContextProps
+  extends RouletteProps, RouletteActions, FormInputs {
   isSpinning?: boolean;
   promotion?: PromotionItem | null;
   prize?: PrizeData | null;

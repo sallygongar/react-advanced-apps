@@ -4,7 +4,7 @@ import type { FormErrors, FormInputs } from "../../types/form";
 import { useRouletteHook } from "../roulette/useRouletteHook";
 
 export const FormProvider = ({ children }: { children: ReactNode }) => {
-  const { playRoulette } = useRouletteHook();
+  const { playRoulette, setUserEmail } = useRouletteHook();
   const [inputs, setInputs] = useState<FormInputs>({
     email: "",
   });
@@ -15,6 +15,10 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInputs((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "email" && setUserEmail) {
+      setUserEmail(value);
+    }
   };
 
   // Manejo del checkbox de términos y condiciones

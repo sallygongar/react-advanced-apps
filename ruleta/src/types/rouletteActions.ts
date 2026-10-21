@@ -11,4 +11,5 @@ export interface RouletteActions {
   onClearUser?: () => void;
   onClearRoulette?: () => void;
   onClearForm?: () => void;
+  setUserEmail?: (email: string) => void;
 }
