@@ -19,7 +19,6 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string>("");
   const [prize, setPrize] = useState<PrizeData | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Función auxiliar para calcular los grados de rotación
   const calculateFinalRotation = useCallback(
@@ -62,9 +61,9 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
         setPrize(null);
       }
     } catch (error) {
-      setIsLoading(false);
+      setLoading(false);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -84,7 +83,7 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
       }
     }
     setPrize(null);
-    setIsLoading(false);
+    setLoading(false);
   }, [checkUserInDatabase]);
 
   // Obtenemos los premios activos desde la API al cargar el componente
