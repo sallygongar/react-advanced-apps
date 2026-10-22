@@ -9,15 +9,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    // 1. Extraemos el eventType de la URL (ej: /api/prizes?eventType=CYBER)
-    const { eventType } = req.query;
-
-    // 2. Iniciamos la consulta base asegurando que estén activos
+    const currentEvent = process.env.ACTIVE_EVENT || "CYBER";
     let query = supabase.from("prize").select("*").eq("is_active", true);
 
-    // 3. Si mandan un eventType, filtramos por él de forma dinámica
-    if (eventType) {
-      query = query.eq("event_type", eventType);
+    if (currentEvent) {
+      query = query.eq("event_type", currentEvent);
     }
 
     const { data: prizes, error } = await query;
@@ -31,7 +27,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       prizes,
     });
   } catch (error: any) {
-    console.error("❌ Error al obtener premios:", error.message);
     return res.status(500).json({ success: false, error: error.message });
   }
 }

@@ -22,7 +22,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       event_type,
     } = req.body;
 
-    // Validamos que los campos obligatorios estén presentes
+    const currentEvent = event_type || "CYBER";
+
     if (!email || !code) {
       return res.status(400).json({
         success: false,
@@ -30,11 +31,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
+    // Asegurar que el usuario exista en la tabla 'user' y obtener su ID
     const { data: userData, error: userError } = await supabase
       .from("user")
-      .upsert(
+      .upsert({ email }, { onConflict: "email" })
+      .select("id")
+      .single();
+
+    if (userError) throw userError;
+    const userId = userData.id;
+
+    // Validar si el usuario YA JUGÓ en este evento específico
+    const { data: existingSpin, error: checkError } = await supabase
+      .from("spins")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("event_type", currentEvent)
+      .maybeSingle();
+
+    if (checkError) throw checkError;
+
+    if (existingSpin) {
+      return res.status(400).json({
+        success: false,
+        error: "Ya has participado en este evento. ¡Espera al siguiente!",
+      });
+    }
+
+    //Registrar el nuevo giro y premio en la tabla 'spins'
+    const { data: spinData, error: spinError } = await supabase
+      .from("spins")
+      .insert([
         {
-          email,
+          user_id: userId,
+          prize_id: prize_id,
           code,
           description,
           winningDegree,
@@ -42,45 +72,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           event_type,
           created_at: new Date(),
         },
-        { onConflict: "email" },
-      )
-      .select("id")
-      .single();
-
-    if (userError) {
-      throw userError;
-    }
-
-    if (userError) {
-      throw userError;
-    }
-
-    const userId = userData.id;
-
-    // PASO 2: Insertar el registro en la tabla de historial 'spins' (relacionando user_id y prize_id)
-    const { data: spinData, error: spinError } = await supabase
-      .from("spins")
-      .insert([
-        {
-          user_id: userId,
-          prize_id: prize_id,
-          created_at: new Date(),
-        },
       ])
       .select()
       .single();
 
-    if (spinError) {
-      throw spinError;
-    }
+    if (spinError) throw spinError;
 
     return res.status(200).json({
       success: true,
-      message: "Usuario y giro registrados exitosamente en el historial",
+      message: "Premio registrado exitosamente en el historial",
       winner: spinData,
     });
   } catch (error: any) {
-    console.error("❌ Error al guardar el ganador:", error.message);
     return res.status(500).json({ success: false, error: error.message });
   }
 }
