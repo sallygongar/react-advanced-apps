@@ -46,28 +46,28 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
     return 0;
   });
 
-  // Función para consultar el endpoint del backend
-  const checkUserInDatabase = async (email: string) => {
-    try {
-      const response = await fetch(
-        `/api/check-user?email=${encodeURIComponent(email)}`,
-      );
-      const data = await response.json();
-      if (data.hasPlayed) {
-        // Si ya jugó en Supabase, cargamos su premio real de la base de datos
-        setPrize(data.prize);
-        localStorage.setItem(STORAGE_KEY_EMAIL, JSON.stringify({ email }));
-      } else {
-        setPrize(null);
-      }
-    } catch (error) {
-      setLoading(false);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    // Función para consultar el endpoint del backend
+    const checkUserInDatabase = async (email: string) => {
+      try {
+        const response = await fetch(
+          `/api/check-user?email=${encodeURIComponent(email)}`,
+        );
+        const data = await response.json();
+        if (data.hasPlayed) {
+          // Si ya jugó en Supabase, cargamos su premio real de la base de datos
+          setPrize(data.prize);
+          localStorage.setItem(STORAGE_KEY_EMAIL, JSON.stringify({ email }));
+        } else {
+          setPrize(null);
+        }
+      } catch (error) {
+        console.error("Error al verificar usuario:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     const dataStorage = localStorage.getItem(STORAGE_KEY_EMAIL);
 
     if (dataStorage) {
@@ -84,7 +84,7 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
     }
     setPrize(null);
     setLoading(false);
-  }, [checkUserInDatabase]);
+  }, []);
 
   // Obtenemos los premios activos desde la API al cargar el componente
   useEffect(() => {
