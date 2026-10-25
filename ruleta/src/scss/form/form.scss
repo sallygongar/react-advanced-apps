@@ -71,6 +71,9 @@
     font-size: 0.85rem;
   }
   &__button {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
     width: 100%;
     padding: 12px;
     background-color: #37baed;
@@ -89,5 +92,19 @@
     &:active {
       transform: scale(0.98);
     }
+  }
+  &__spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: play-spin 0.8s linear infinite;
+  }
+}
+
+@keyframes play-spin {
+  to {
+    transform: rotate(360deg);
   }
 }

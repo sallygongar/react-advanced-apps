@@ -17,6 +17,7 @@ interface RouletteContextProps
   rotationDegree?: number;
   loading?: boolean;
   error?: string | null;
+  isPlaying?: boolean;
 }
 
 const RouletteContext = createContext<RouletteContextProps | null>(null);

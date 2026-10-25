@@ -6,6 +6,7 @@ interface RouletteFormContextProps extends RouletteActions {
   inputs: FormInputs;
   errors?: FormErrors;
   acceptedTerms?: boolean;
+  isPlaying?: boolean;
 }
 
 const FormContext = createContext<RouletteFormContextProps | undefined>(
