@@ -1,61 +1,108 @@
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import RouletteContext from "./RouletteContext";
 import type { PromotionItem, PrizeData } from "../../types/wheel";
 
 const STORAGE_KEY = "roulette_prize_result";
 const STORAGE_KEY_EMAIL = "roulette_email";
+const SPIN_DURATION = 4000;
+const colors = ["#fff", "#37BAED"];
+
+// ---------- Helpers (no dependen del componente) ----------
+const calculateFinalRotation = (
+  winningDegree: number,
+  extraLaps = 5,
+): number => {
+  const pingAngle = 343;
+  const targetDegree = (pingAngle - (winningDegree % 360) + 360) % 360;
+  const laps = extraLaps > 0 ? extraLaps : 1;
+  return laps * 360 + targetDegree;
+};
+
+const readStorage = <T,>(key: string): T | null => {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : null;
+  } catch {
+    return null;
+  }
+};
+
+const persistResult = (prize: PrizeData, email: string) => {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(prize));
+  localStorage.setItem(STORAGE_KEY_EMAIL, JSON.stringify({ email }));
+};
+
+const fetchUserStatus = async (email: string) => {
+  const response = await fetch(
+    `/api/check-user?email=${encodeURIComponent(email)}`,
+  );
+  if (!response.ok) throw new Error("Error en la verificación del usuario");
+  return response.json();
+};
+
+const saveWinner = async (resultPrize: PrizeData, email: string) => {
+  try {
+    const response = await fetch("/api/save-winner", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        code: resultPrize.code,
+        description: resultPrize.description,
+        winningDegree: resultPrize.winningDegree,
+        isWin: resultPrize.isWin,
+        prize_id: resultPrize.id,
+        event_type: resultPrize.event_type,
+      }),
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      console.log("🎉 ¡Ganador guardado con éxito en Supabase!", data.winner);
+    } else {
+      console.error("Error al guardar en Supabase:", data.error);
+    }
+  } catch (error) {
+    console.error("Error de red al intentar guardar:", error);
+  }
+};
 
 export const RouletteProvider = ({ children }: { children: ReactNode }) => {
-  const [colors, setColors] = useState<string[]>([]);
   const [isSpinning, setIsSpinning] = useState<boolean>(false);
   const [rawPrizes, setRawPrizes] = useState<PromotionItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loadingUser, setLoadingUser] = useState<boolean>(true);
+  const [loadingPrizes, setLoadingPrizes] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string>("");
   const [prize, setPrize] = useState<PrizeData | null>(null);
-
-  // Función auxiliar para calcular los grados de rotación
-  const calculateFinalRotation = useCallback(
-    (winningDegree: number, extraLaps = 5): number => {
-      const pingAngle = 343;
-      const targetDegree = (pingAngle - (winningDegree % 360) + 360) % 360;
-      const laps = extraLaps > 0 ? extraLaps : 1;
-      return laps * 360 + targetDegree;
-    },
-    [],
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [isFinished, setIsFinished] = useState<boolean>(
+    () => readStorage(STORAGE_KEY_EMAIL) !== null,
   );
 
-  const [isFinished, setIsFinished] = useState<boolean>(() => {
-    return localStorage.getItem(STORAGE_KEY_EMAIL) !== null;
+  const [rotationDegree, setRotationDegree] = useState<number>(() => {
+    const savedPrize = readStorage<PrizeData>(STORAGE_KEY);
+    return savedPrize?.winningDegree !== undefined
+      ? calculateFinalRotation(savedPrize.winningDegree, 0)
+      : 0;
   });
 
-  const [rotationDegree, setRotationDegree] = useState<number>(() => {
-    const savedPrize = localStorage.getItem(STORAGE_KEY);
-    if (savedPrize) {
-      const prizeData: PrizeData = JSON.parse(savedPrize);
-      if (prizeData.winningDegree !== undefined) {
-        return calculateFinalRotation(prizeData.winningDegree, 0);
-      }
-    }
-    return 0;
-  });
+  const spinTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loading = loadingUser || loadingPrizes;
+
+  // Limpia el timer si el componente se desmonta durante el giro
+  useEffect(() => {
+    return () => {
+      if (spinTimeout.current) clearTimeout(spinTimeout.current);
+    };
+  }, []);
 
   useEffect(() => {
     // Función para consultar el endpoint del backend
     const checkUserInDatabase = async (email: string) => {
       try {
-        const response = await fetch(
-          `/api/check-user?email=${encodeURIComponent(email)}`,
-        );
-        const data = await response.json();
+        const data = await fetchUserStatus(email);
         if (data.hasPlayed) {
-          // Si ya jugó en Supabase, cargamos su premio real de la base de datos
           setPrize(data.prize);
           localStorage.setItem(STORAGE_KEY_EMAIL, JSON.stringify({ email }));
         } else {
@@ -64,33 +111,23 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
       } catch (error) {
         console.error("Error al verificar usuario:", error);
       } finally {
-        setLoading(false);
+        setLoadingUser(false);
       }
     };
 
-    const dataStorage = localStorage.getItem(STORAGE_KEY_EMAIL);
-
-    if (dataStorage) {
-      try {
-        const dataEmail = JSON.parse(dataStorage);
-        if (dataEmail?.email) {
-          setUserEmail(dataEmail.email);
-          checkUserInDatabase(dataEmail.email);
-          return;
-        }
-      } catch (e) {
-        console.error("Error al parsear el email guardado:", e);
-      }
+    const saved = readStorage<{ email?: string }>(STORAGE_KEY_EMAIL);
+    if (saved?.email) {
+      setUserEmail(saved.email);
+      checkUserInDatabase(saved.email);
+      return;
     }
     setPrize(null);
-    setLoading(false);
+    setLoadingUser(false);
   }, []);
 
   // Obtenemos los premios activos desde la API al cargar el componente
+  // Obtenemos los premios activos desde la API al cargar el componente
   useEffect(() => {
-    setLoading(true);
-
-    // Puedes cambiar 'CYBER' por una variable si la manejas dinámicamente
     fetch("/api/prizes")
       .then((res) => {
         if (!res.ok) throw new Error("Error al obtener la lista de premios");
@@ -107,13 +144,7 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
         console.error("Error cargando premios:", err);
         setError(err.message);
       })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
-
-  useEffect(() => {
-    setColors(["#fff", "#37BAED"]); // 37BAED  ,175C1D
+      .finally(() => setLoadingPrizes(false));
   }, []);
 
   const promotions: PromotionItem[] = useMemo(() => {
@@ -136,99 +167,56 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
   }, [rawPrizes]);
 
   async function playRoulette() {
-    if (isSpinning || isFinished) return;
+    if (isSpinning || isFinished || promotions.length === 0) return;
 
     try {
-      // 1. Verificamos en el servidor SI YA JUGÓ antes de iniciar la animación
-      const responseCheck = await fetch(
-        `/api/check-user?email=${encodeURIComponent(userEmail)}`,
-      );
-
-      if (!responseCheck.ok) throw new Error("Error en la verificación previa");
-
-      const dataCheck = await responseCheck.json();
+      // 1. Verificamos en el servidor si ya jugó antes de iniciar la animación
+      setIsPlaying(true);
+      const dataCheck = await fetchUserStatus(userEmail);
 
       if (dataCheck.hasPlayed) {
-        // Si ya jugó, bloqueamos la ruleta inmediatamente y le mostramos su premio
         alert("¡Ya has participado en este evento con este correo!");
         setPrize(dataCheck.prize);
         setIsFinished(true);
-
-        // Restauramos su localStorage para futuras recargas
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataCheck.prize));
-        localStorage.setItem(
-          STORAGE_KEY_EMAIL,
-          JSON.stringify({ email: userEmail }),
-        );
+        persistResult(dataCheck.prize, userEmail);
+        setIsPlaying(false);
         return;
       }
 
       setIsSpinning(true);
 
-      const randomIndex = Math.floor(Math.random() * promotions.length);
-      const selectedPromotion = promotions[randomIndex];
+      const selectedPromotion =
+        promotions[Math.floor(Math.random() * promotions.length)];
 
       const resultPrize: PrizeData = {
-        id: selectedPromotion?.id,
+        id: selectedPromotion.id,
         email: userEmail,
-        isWin: selectedPromotion?.isWin,
-        code: selectedPromotion?.code,
-        description: selectedPromotion?.description,
-        winningDegree: selectedPromotion?.grade,
-        event_type: selectedPromotion?.event_type,
+        isWin: selectedPromotion.isWin,
+        code: selectedPromotion.code,
+        description: selectedPromotion.description,
+        winningDegree: selectedPromotion.grade,
+        event_type: selectedPromotion.event_type,
       };
 
-      // 2. Calcular los grados finales de rotación (5 giros + ángulo del premio)
-      const totalRotation = calculateFinalRotation(
-        selectedPromotion.grade ?? 0,
-        5,
+      // 2. Grados finales de rotación (5 giros + ángulo del premio)
+      setRotationDegree(
+        calculateFinalRotation(selectedPromotion.grade ?? 0, 5),
       );
-      setRotationDegree(totalRotation);
 
-      // 3. Simular el tiempo de giro de la rueda (ejemplo: 4 segundos)
-      setTimeout(async () => {
+      // 3. Al terminar el giro, mostramos y guardamos el resultado
+      spinTimeout.current = setTimeout(() => {
         setPrize(resultPrize);
         setIsFinished(true);
         setIsSpinning(false);
-
-        // Guardar en localStorage para que persista al recargar
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(resultPrize));
-        localStorage.setItem(
-          STORAGE_KEY_EMAIL,
-          JSON.stringify({ email: userEmail }),
-        );
-
-        try {
-          const response = await fetch("/api/save-winner", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: userEmail,
-              code: resultPrize.code,
-              description: resultPrize.description,
-              winningDegree: resultPrize.winningDegree,
-              isWin: resultPrize.isWin,
-              prize_id: resultPrize.id,
-              event_type: resultPrize.event_type,
-            }),
-          });
-
-          const data = await response.json();
-          if (data.success) {
-            console.log(
-              "🎉 ¡Ganador guardado con éxito en Supabase!",
-              data.winner,
-            );
-          } else {
-            console.error("Error al guardar en Supabase:", data.error);
-          }
-        } catch (error) {
-          console.error("Error de red al intentar guardar:", error);
-        }
-      }, 4000);
+        setIsPlaying(false);
+        persistResult(resultPrize, userEmail);
+        saveWinner(resultPrize, userEmail);
+      }, SPIN_DURATION);
     } catch (error) {
       console.error("Error al verificar estatus antes de girar:", error);
+    } finally {
       setIsSpinning(false);
+      setIsPlaying(false);
     }
   }
 
@@ -242,6 +230,7 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
         isFinished,
         rotationDegree,
         loading,
+        isPlaying,
         error,
         email: userEmail,
         setUserEmail,

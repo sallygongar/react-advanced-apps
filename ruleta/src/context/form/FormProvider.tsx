@@ -4,7 +4,7 @@ import type { FormErrors, FormInputs } from "../../types/form";
 import { useRouletteHook } from "../roulette/useRouletteHook";
 
 export const FormProvider = ({ children }: { children: ReactNode }) => {
-  const { playRoulette, setUserEmail } = useRouletteHook();
+  const { playRoulette, setUserEmail, isPlaying } = useRouletteHook();
   const [inputs, setInputs] = useState<FormInputs>({
     email: "",
   });
@@ -59,6 +59,7 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
         inputs,
         errors,
         acceptedTerms,
+        isPlaying,
         onInputChange,
         onTermsChange,
         onValidateForm,
