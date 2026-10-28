@@ -3,6 +3,7 @@ import type { Canvas, CanvasContext } from "../../types/wheel";
 import ping from "../../assets/images/ping-svg-2.svg";
 import { isMobile } from "react-device-detect";
 import { useRouletteHook } from "../../context/roulette/useRouletteHook";
+import { SPIN_DURATION } from "../../constants/roulette";
 
 const Wheel = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -135,7 +136,7 @@ const Wheel = () => {
     const canvas = canvasRef.current;
     if (!canvas || !rotationDegree) return;
     if (isSpinning) {
-      canvas.style.transition = "transform 10s ease-out";
+      canvas.style.transition = `transform ${SPIN_DURATION / 1000}s ease-out`;
     } else {
       canvas.style.transition = "none";
     }

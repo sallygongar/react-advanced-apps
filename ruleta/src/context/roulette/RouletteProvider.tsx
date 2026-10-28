@@ -1,10 +1,10 @@
 import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import RouletteContext from "./RouletteContext";
 import type { PromotionItem, PrizeData } from "../../types/wheel";
+import { SPIN_DURATION } from "../../constants/roulette";
 
 const STORAGE_KEY = "roulette_prize_result";
 const STORAGE_KEY_EMAIL = "roulette_email";
-const SPIN_DURATION = 4000;
 const colors = ["#fff", "#37BAED"];
 
 // ---------- Helpers (no dependen del componente) ----------
@@ -167,7 +167,8 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
   }, [rawPrizes]);
 
   async function playRoulette() {
-    if (isSpinning || isFinished || promotions.length === 0) return;
+    if (isSpinning || isPlaying || isFinished || promotions.length === 0)
+      return;
 
     try {
       // 1. Verificamos en el servidor si ya jugó antes de iniciar la animación
@@ -214,7 +215,6 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
       }, SPIN_DURATION);
     } catch (error) {
       console.error("Error al verificar estatus antes de girar:", error);
-    } finally {
       setIsSpinning(false);
       setIsPlaying(false);
     }
