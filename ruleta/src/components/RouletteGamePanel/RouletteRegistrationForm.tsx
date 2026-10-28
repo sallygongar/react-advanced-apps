@@ -7,7 +7,7 @@ const RouletteRegistrationForm = () => {
     errors,
     acceptedTerms,
     isPlaying,
-    isPlayed,
+    isVerifying,
     onTermsChange,
     onInputChange,
     onValidateForm,
@@ -73,12 +73,12 @@ const RouletteRegistrationForm = () => {
         type="button"
         className={`roulette-form__button`}
         onClick={handleSubmit}
-        disabled={isPlayed || isPlaying}
+        disabled={isVerifying || isPlaying}
       >
-        {(isPlaying || isPlayed) && (
+        {(isPlaying || isVerifying) && (
           <span className="roulette-form__spinner" aria-hidden="true" />
         )}
-        {isPlayed ? "Verificando..." : isPlaying ? "Jugando..." : "Jugar"}
+        {isVerifying ? "Verificando..." : isPlaying ? "Jugando..." : "Jugar"}
       </button>
     </div>
   );
