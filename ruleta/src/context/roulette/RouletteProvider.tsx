@@ -1,10 +1,10 @@
 import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import RouletteContext from "./RouletteContext";
 import type { PromotionItem, PrizeData } from "../../types/wheel";
+import { SPIN_DURATION } from "../../constants/roulette";
 
 const STORAGE_KEY = "roulette_prize_result";
 const STORAGE_KEY_EMAIL = "roulette_email";
-const SPIN_DURATION = 4000;
 const colors = ["#fff", "#37BAED"];
 
 // ---------- Helpers (no dependen del componente) ----------
@@ -79,6 +79,7 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
   const [isFinished, setIsFinished] = useState<boolean>(
     () => readStorage(STORAGE_KEY_EMAIL) !== null,
   );
+  const [isVerifying, setIsVerifying] = useState<boolean>(false);
 
   const [rotationDegree, setRotationDegree] = useState<number>(() => {
     const savedPrize = readStorage<PrizeData>(STORAGE_KEY);
@@ -167,11 +168,12 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
   }, [rawPrizes]);
 
   async function playRoulette() {
-    if (isSpinning || isFinished || promotions.length === 0) return;
+    if (isSpinning || isPlaying || isFinished || promotions.length === 0)
+      return;
 
     try {
       // 1. Verificamos en el servidor si ya jugó antes de iniciar la animación
-      setIsPlaying(true);
+      setIsVerifying(true);
       const dataCheck = await fetchUserStatus(userEmail);
 
       if (dataCheck.hasPlayed) {
@@ -179,10 +181,12 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
         setPrize(dataCheck.prize);
         setIsFinished(true);
         persistResult(dataCheck.prize, userEmail);
-        setIsPlaying(false);
+        setIsVerifying(false);
         return;
       }
 
+      setIsVerifying(false);
+      setIsPlaying(true);
       setIsSpinning(true);
 
       const selectedPromotion =
@@ -214,9 +218,9 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
       }, SPIN_DURATION);
     } catch (error) {
       console.error("Error al verificar estatus antes de girar:", error);
-    } finally {
       setIsSpinning(false);
       setIsPlaying(false);
+      setIsVerifying(false);
     }
   }
 
@@ -231,6 +235,7 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
         rotationDegree,
         loading,
         isPlaying,
+        isVerifying,
         error,
         email: userEmail,
         setUserEmail,
