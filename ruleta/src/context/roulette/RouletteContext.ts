@@ -18,6 +18,7 @@ interface RouletteContextProps
   loading?: boolean;
   error?: string | null;
   isPlaying?: boolean;
+  isPlayed?: boolean;
 }
 
 const RouletteContext = createContext<RouletteContextProps | null>(null);

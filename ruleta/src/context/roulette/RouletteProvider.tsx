@@ -79,6 +79,7 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
   const [isFinished, setIsFinished] = useState<boolean>(
     () => readStorage(STORAGE_KEY_EMAIL) !== null,
   );
+  const [isPlayed, setIsPlayed] = useState<boolean>(false);
 
   const [rotationDegree, setRotationDegree] = useState<number>(() => {
     const savedPrize = readStorage<PrizeData>(STORAGE_KEY);
@@ -172,7 +173,7 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
 
     try {
       // 1. Verificamos en el servidor si ya jugó antes de iniciar la animación
-      setIsPlaying(true);
+      setIsPlayed(true);
       const dataCheck = await fetchUserStatus(userEmail);
 
       if (dataCheck.hasPlayed) {
@@ -180,10 +181,12 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
         setPrize(dataCheck.prize);
         setIsFinished(true);
         persistResult(dataCheck.prize, userEmail);
-        setIsPlaying(false);
+        setIsPlayed(false);
         return;
       }
 
+      setIsPlayed(false);
+      setIsPlaying(true);
       setIsSpinning(true);
 
       const selectedPromotion =
@@ -217,6 +220,7 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error al verificar estatus antes de girar:", error);
       setIsSpinning(false);
       setIsPlaying(false);
+      setIsPlayed(false);
     }
   }
 
@@ -231,6 +235,7 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
         rotationDegree,
         loading,
         isPlaying,
+        isPlayed,
         error,
         email: userEmail,
         setUserEmail,
