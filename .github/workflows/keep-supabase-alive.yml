@@ -1,0 +1,21 @@
+name: Keep Supabase alive
+
+on:
+  schedule:
+    - cron: "0 14 * * *" # todos los días a las 14:00 UTC
+  workflow_dispatch: # permite ejecutarlo a mano desde la pestaña Actions
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call /api/prizes (reads from Supabase)
+        env:
+          API_URL: https://ruleta-sagongar.vercel.app/api/prizes
+        run: |
+          # ?ping=... evita cualquier caché intermedia
+          response=$(curl --silent --show-error --fail --max-time 30 "$API_URL?ping=$(date +%s)")
+          echo "$response" | head -c 300
+          echo
+          # Falla el job si la API no devolvió success: true
+          echo "$response" | grep -q '"success":true'
