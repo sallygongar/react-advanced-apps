@@ -47,18 +47,6 @@ All projects use **Vite**, strict linting, and are deployed on **Vercel**.
 - **Dual persistence:** `localStorage` for instant UX and Supabase as the source of truth.
 - **Error and loading state handling** with `try/catch/finally`.
 
----
-
-## 🗺️ Roadmap
-
-- [x] Tests with Vitest and Testing Library for critical logic (cart, rotation calculation)
-- [ ] GitHub Actions: lint, type-check, and tests on every PR
-- [ ] Server-side prize selection (prize wheel)
-- [ ] Dashboard with authentication, roles, tables, and charts
-- [ ] Next.js app (SSR/SSG)
-- [ ] Accessible component library with Storybook
-
----
 
 ## ⚙️ Monorepo Structure
 
