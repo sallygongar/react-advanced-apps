@@ -19,12 +19,15 @@ All projects use **Vite**, strict linting, and are deployed on **Vercel**.
 | **🛍️ Premium E-Commerce** | Online store with a dynamic catalog, a cart persisted in localStorage, and a simulated checkout flow with form validation.                                                                                          | `React` `TypeScript` `Zustand` `React Hook Form` `Zod` `Sass Modules`     | [📁 Code](./ecommerce-premium) · [🔗 Live Demo](https://sallygongar-ecommerce.vercel.app) |
 | **🎰 Prize Wheel**        | Gamification wheel for digital marketing, adaptable to any e-commerce store. Dynamic prizes, probability control, and results persisted in the browser **and in Supabase** (an email can only play once per event). | `React` `TypeScript` `HTML5 Canvas` `Sass` `Supabase` `Vercel Serverless` | [📁 Code](./ruleta) · [🔗 Live Demo](https://ruleta-sagongar.vercel.app/)                 |
 
-<!-- Add screenshots or GIFs here:
-![E-commerce](./docs/ecommerce.png)
-![Prize Wheel](./docs/ruleta.gif)
--->
+### 🎬 Previews
 
----
+**🛍️ Premium E-Commerce**
+
+<img src="./ecommerce-premium/docs/ecommerce.gif" width="500" alt="Premium E-Commerce demo" />
+
+**🎰 Prize Wheel**
+
+<img src="./ruleta/docs/ruleta.gif" width="500" alt="Prize Wheel demo" />
 
 ## 🛠️ Technical Skills Demonstrated
 
@@ -48,7 +51,7 @@ All projects use **Vite**, strict linting, and are deployed on **Vercel**.
 
 ## 🗺️ Roadmap
 
-- [ ] Tests with Vitest and Testing Library for critical logic (cart, rotation calculation)
+- [x] Tests with Vitest and Testing Library for critical logic (cart, rotation calculation)
 - [ ] GitHub Actions: lint, type-check, and tests on every PR
 - [ ] Server-side prize selection (prize wheel)
 - [ ] Dashboard with authentication, roles, tables, and charts
@@ -75,5 +78,5 @@ Each app is independent: go into its folder, install dependencies, and run `npm 
 If you are a recruiter, a developer, or just interested in my work:
 
 - **GitHub:** [@sallygongar](https://github.com/sallygongar)
-- **LinkedIn:** [Sally González](https://www.linkedin.com//in/sally-candelaria-b56a9a183/)
+- **LinkedIn:** [Sally González](https://www.linkedin.com/in/sally-candelaria-b56a9a183/)
 - **Email:** sallygonzalez1908@gmail.com
