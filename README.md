@@ -21,12 +21,13 @@ All projects use **Vite**, strict linting, and are deployed on **Vercel**.
 
 ### 🎬 Previews
 
-## Ecommerce
+**🛍️ Premium E-Commerce**
 
- <img src="./ecommerce-premium/docs/ecommerce.gif" width="420" alt="Premium E-Commerce demo" />
- 
- ## Ruleta
- <img src="./ruleta/docs/ruleta.gif" width="420" alt="Prize Wheel demo" />
+<img src="./ecommerce-premium/docs/ecommerce.gif" width="500" alt="Premium E-Commerce demo" />
+
+**🎰 Prize Wheel**
+
+<img src="./ruleta/docs/ruleta.gif" width="500" alt="Prize Wheel demo" />
 
 ## 🛠️ Technical Skills Demonstrated
 
