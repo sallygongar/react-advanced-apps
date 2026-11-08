@@ -157,12 +157,7 @@ const Wheel = () => {
           </div>
         </>
       )}
-      <canvas
-        ref={canvasRef}
-        width={375}
-        height={375}
-        aria-hidden={Boolean(error)}
-      ></canvas>
+      {!error && <canvas ref={canvasRef} width={375} height={375}></canvas>}
       {error && (
         <div className="roulette-error" role="alert">
           <p className="roulette-error__title">No pudimos cargar la ruleta</p>
