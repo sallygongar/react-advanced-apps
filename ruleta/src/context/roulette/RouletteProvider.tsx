@@ -9,15 +9,26 @@ import {
 } from "../../constants/roulette";
 import { calculateFinalRotation } from "../../utils/roulette";
 import { readStorage, persistResult } from "../../utils/storage";
-import { fetchUserStatus, saveWinner } from "../../services/rouletteApi";
+import {
+  fetchPrizes,
+  fetchUserStatus,
+  saveWinner,
+} from "../../services/rouletteApi";
 
 export const RouletteProvider = ({ children }: { children: ReactNode }) => {
+  // Correo guardado al abrir la página (se lee una sola vez, nunca cambia)
+  const [savedEmail] = useState<string>(
+    () => readStorage<{ email?: string }>(STORAGE_KEY_EMAIL)?.email ?? "",
+  );
+
   const [isSpinning, setIsSpinning] = useState<boolean>(false);
   const [rawPrizes, setRawPrizes] = useState<PromotionItem[]>([]);
-  const [loadingUser, setLoadingUser] = useState<boolean>(true);
+  // Solo hay algo que verificar si existe un correo guardado
+  const [loadingUser, setLoadingUser] = useState<boolean>(Boolean(savedEmail));
   const [loadingPrizes, setLoadingPrizes] = useState<boolean>(true);
+  const [prizesAttempt, setPrizesAttempt] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
-  const [userEmail, setUserEmail] = useState<string>("");
+  const [userEmail, setUserEmail] = useState<string>(savedEmail);
   const [prize, setPrize] = useState<PrizeData | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isFinished, setIsFinished] = useState<boolean>(
@@ -42,54 +53,64 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
+  // Verifica en el servidor al usuario guardado en localStorage (solo al montar)
   useEffect(() => {
-    // Función para consultar el endpoint del backend
-    const checkUserInDatabase = async (email: string) => {
-      try {
-        const data = await fetchUserStatus(email);
+    if (!savedEmail) return;
+
+    let cancelled = false;
+
+    fetchUserStatus(savedEmail)
+      .then((data) => {
+        if (cancelled) return;
         if (data.hasPlayed) {
           setPrize(data.prize);
-          localStorage.setItem(STORAGE_KEY_EMAIL, JSON.stringify({ email }));
-        } else {
-          setPrize(null);
+          localStorage.setItem(
+            STORAGE_KEY_EMAIL,
+            JSON.stringify({ email: savedEmail }),
+          );
         }
-      } catch (error) {
-        console.error("Error al verificar usuario:", error);
-      } finally {
-        setLoadingUser(false);
-      }
-    };
-
-    const saved = readStorage<{ email?: string }>(STORAGE_KEY_EMAIL);
-    if (saved?.email) {
-      setUserEmail(saved.email);
-      checkUserInDatabase(saved.email);
-      return;
-    }
-    setPrize(null);
-    setLoadingUser(false);
-  }, []);
-
-  // Obtenemos los premios activos desde la API al cargar el componente
-  useEffect(() => {
-    fetch("/api/prizes")
-      .then((res) => {
-        if (!res.ok) throw new Error("Error al obtener la lista de premios");
-        return res.json();
       })
-      .then((data) => {
-        if (data.success) {
-          setRawPrizes(data.prizes);
-        } else {
-          setError(data.error || "No se pudieron cargar los premios");
-        }
+      .catch((error) => {
+        console.error("Error al verificar usuario:", error);
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingUser(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [savedEmail]);
+
+  // Obtenemos los premios activos desde la API (y al reintentar)
+  useEffect(() => {
+    let cancelled = false;
+
+    fetchPrizes()
+      .then((prizes) => {
+        if (!cancelled) setRawPrizes(prizes);
       })
       .catch((err) => {
         console.error("Error cargando premios:", err);
-        setError(err.message);
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : "Error desconocido");
+        }
       })
-      .finally(() => setLoadingPrizes(false));
-  }, []);
+      .finally(() => {
+        if (!cancelled) setLoadingPrizes(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [prizesAttempt]);
+
+  // Vuelve a pedir los premios cuando falló la carga
+  const retryLoadPrizes = () => {
+    setError(null);
+    setLoadingPrizes(true);
+    setPrizesAttempt((n) => n + 1);
+  };
 
   const promotions: PromotionItem[] = useMemo(() => {
     const total = rawPrizes.length;
@@ -183,6 +204,7 @@ export const RouletteProvider = ({ children }: { children: ReactNode }) => {
         email: userEmail,
         setUserEmail,
         playRoulette,
+        retryLoadPrizes,
       }}
     >
       {children}

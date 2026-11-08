@@ -5,86 +5,88 @@ import { isMobile } from "react-device-detect";
 import { useRouletteHook } from "../../context/roulette/useRouletteHook";
 import { SPIN_DURATION } from "../../constants/roulette";
 
+function drawText(context: CanvasContext, text: string, x: number, y: number) {
+  if (!context) return;
+  const lines = text.split("\n");
+  let yOffset = -(lines.length - 1) * 7;
+
+  context.font = isMobile ? "600 12px Montserrat" : "600 14px Montserrat";
+
+  lines.forEach((line) => {
+    const cleanLine = line.replace(/\*/g, "");
+    context.fillText(cleanLine, x, y + yOffset);
+    yOffset += 15;
+  });
+}
+
+// Función para dibujar un segmento individual
+const drawWheel = (
+  canvas: Canvas,
+  context: CanvasContext,
+  index: number,
+  totalSegments: number,
+  centerX: number,
+  centerY: number,
+  radio: number,
+  description: string,
+  colors: string[],
+) => {
+  if (!context) return;
+  if (!canvas) return;
+
+  const segmentAngle = (2 * Math.PI) / totalSegments;
+  const startAngle = (index * 2 * Math.PI) / totalSegments;
+  const endAngle = ((index + 1) * 2 * Math.PI) / totalSegments;
+  const centerAngle = startAngle + segmentAngle / 2;
+
+  // 1. Dibujar Rebanada
+  context.beginPath();
+
+  // Traza un arco (una porción del círculo)
+  context.arc(centerX, centerY, radio, startAngle, endAngle);
+
+  // Cierra el arco al centro, creando una "rebanada"
+  context.lineTo(centerX, centerY);
+
+  //Configura el estilo del borde y lo dibuja
+  context.lineWidth = 8;
+  context.strokeStyle = "#37BAED";
+  context.stroke();
+
+  //Rellena el segmento con un color
+  context.fillStyle = index % 2 === 0 ? colors[0] : colors[1];
+  context.fill();
+
+  // // Transforma el contexto para preparar la escritura de texto
+  context.save();
+  context.translate(centerX, centerY);
+  // Rota hacia el centro de la rebanada actual
+  context.rotate(centerAngle);
+
+  //context.translate(-centerX, -centerY);
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.fillStyle = index % 2 === 0 ? "#111" : "#fff";
+
+  // Ubicar el texto
+  const textDistance = radio * 0.65;
+
+  drawText(context, description, textDistance, 0);
+  context.restore();
+};
+
 const Wheel = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  const { promotions, colors, isSpinning, rotationDegree, loading, error } =
-    useRouletteHook();
-
-  // Función para dibujar un segmento individual
-  const drawWheel = (
-    canvas: Canvas,
-    context: CanvasContext,
-    index: number,
-    totalSegments: number,
-    centerX: any,
-    centerY: any,
-    radio: number,
-  ) => {
-    if (!context) return;
-    if (!canvas) return;
-
-    const segmentAngle = (2 * Math.PI) / totalSegments;
-    const startAngle = (index * 2 * Math.PI) / totalSegments;
-    const endAngle = ((index + 1) * 2 * Math.PI) / totalSegments;
-    const centerAngle = startAngle + segmentAngle / 2;
-
-    // 1. Dibujar Rebanada
-    context.beginPath();
-
-    // Traza un arco (una porción del círculo)
-    context.arc(centerX, centerY, radio, startAngle, endAngle);
-
-    // Cierra el arco al centro, creando una "rebanada"
-    context.lineTo(centerX, centerY);
-
-    //Configura el estilo del borde y lo dibuja
-    context.lineWidth = 8;
-    context.strokeStyle = "#37BAED";
-    context.stroke();
-
-    //Rellena el segmento con un color
-    context.fillStyle = index % 2 === 0 ? colors[0] : colors[1];
-    context.fill();
-
-    // // Transforma el contexto para preparar la escritura de texto
-    context.save();
-    context.translate(centerX, centerY);
-    // Rota hacia el centro de la rebanada actual
-    context.rotate(centerAngle);
-
-    //context.translate(-centerX, -centerY);
-    context.textAlign = "center";
-    context.textBaseline = "middle";
-    context.fillStyle = index % 2 === 0 ? "#111" : "#fff";
-
-    const textPromotion = promotions[index].description;
-
-    // Ubicar el texto
-    const textDistance = radio * 0.65;
-
-    drawText(context, textPromotion, textDistance, 0);
-    context.restore();
-  };
-
-  function drawText(
-    context: CanvasContext,
-    text: string,
-    x: number,
-    y: number,
-  ) {
-    if (!context) return;
-    const lines = text.split("\n");
-    let yOffset = -(lines.length - 1) * 7;
-
-    context.font = isMobile ? "600 12px Montserrat" : "600 14px Montserrat";
-
-    lines.forEach((line) => {
-      const cleanLine = line.replace(/\*/g, "");
-      context.fillText(cleanLine, x, y + yOffset);
-      yOffset += 15;
-    });
-  }
+  const {
+    promotions,
+    colors,
+    isSpinning,
+    rotationDegree,
+    loading,
+    error,
+    retryLoadPrizes,
+  } = useRouletteHook();
 
   // Renderizado del Canvas
   useEffect(() => {
@@ -110,24 +112,24 @@ const Wheel = () => {
     }
 
     // 2. Caso de Error: Dibujar mensaje de error en el centro del Canvas
-    if (error) {
-      ctx.font = "600 12px Montserrat";
-      ctx.fillStyle = "#E53E3E"; // Color rojo de advertencia
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("Error al cargar la ruleta", centerX, centerY - 10);
-      ctx.font = "400 10px Montserrat";
-      ctx.fillStyle = "#718096";
-      ctx.fillText("Intenta recargar la página", centerX, centerY + 10);
-      return;
-    }
+    if (error) return;
 
     const totalSegments = promotions.length;
     const radio = isMobile ? 160 : 170;
 
     if (totalSegments > 0) {
       for (let i = 0; i < totalSegments; i++) {
-        drawWheel(canvas, ctx, i, totalSegments, centerX, centerY, radio);
+        drawWheel(
+          canvas,
+          ctx,
+          i,
+          totalSegments,
+          centerX,
+          centerY,
+          radio,
+          promotions[i].description,
+          colors,
+        );
       }
     }
   }, [promotions, colors, loading, error]);
@@ -145,7 +147,7 @@ const Wheel = () => {
 
   return (
     <div className="roulette-left__wrapper">
-      {!loading && (
+      {!loading && !error && (
         <>
           <div className="roulette-circle"></div>
           <div
@@ -155,7 +157,22 @@ const Wheel = () => {
           </div>
         </>
       )}
-      <canvas ref={canvasRef} width={375} height={375}></canvas>
+      {!error && <canvas ref={canvasRef} width={375} height={375}></canvas>}
+      {error && (
+        <div className="roulette-error" role="alert">
+          <p className="roulette-error__title">No pudimos cargar la ruleta</p>
+          <p className="roulette-error__text">
+            Revisa tu conexión e inténtalo de nuevo.
+          </p>
+          <button
+            type="button"
+            className="roulette-error__button"
+            onClick={retryLoadPrizes}
+          >
+            Reintentar
+          </button>
+        </div>
+      )}
     </div>
   );
 };
