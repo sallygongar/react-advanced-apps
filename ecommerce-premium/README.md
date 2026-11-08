@@ -1,73 +1,90 @@
-# 🚀 TS/React E-Commerce con Pasarela de Pago Simulada
+# 🛍️ TS/React E-Commerce with a Simulated Payment Gateway
 
-¡Bienvenido! Este proyecto es una plataforma de comercio electrónico moderna, rápida y completamente tipada, construida con **React**, **TypeScript** y **Vite**.
+A modern, fast and fully typed e-commerce app built with **React 19**, **TypeScript** and **Vite**.
 
-> _Demo en Vivo:_ [Visita la aplicación desplegada aquí](https://sallygongar-ecommerce.vercel.app/)
+> **Live demo:** [sallygongar-ecommerce.vercel.app](https://sallygongar-ecommerce.vercel.app/)
 
-La aplicación consume una API real de productos, gestiona un carrito de compras persistente y cuenta con un flujo de checkout con validación bancaria estricta.
+**🛍️ Demo E-Commerce**
 
-Desarrollado aplicando buenas prácticas de arquitectura de software, separación de responsabilidades mediante Custom Hooks y modularización de estilos.
+<img src="./docs/ecommerce.gif" width="500" alt="Premium E-Commerce demo" />
 
----
+The app consumes the public products API **TODO: API name and link**, keeps a persistent shopping cart, and includes a checkout flow with card validation. The payment is a **simulation**: no real card data is processed or stored.
 
-## 🛠️ Tecnologías y Herramientas
-
-El proyecto está construido sobre el ecosistema moderno de React:
-
-- **Core:** [React 18+](https://react.dev/) + [Vite](https://vitejs.dev/) (para un entorno de desarrollo ultra rápido).
-- **Lenguaje:** [TypeScript](https://www.typescriptlang.org/) (Tipado estricto y contratos de datos robustos).
-- **Estado Global:** [Zustand](https://zustand-demo.pmnd.rs/) + Middleware de persistencia para el carrito de compras.
-- **Enrutamiento:** [React Router Dom](https://reactrouter.com/) (Navegación fluida de SPA).
-- **Formularios y Validación:** [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/) (Validación síncrona en cliente).
-- **Estilos:** [Sass Modules](https://sass-lang.com/) (Estilos encapsulados por componente para evitar colisiones).
+Built with separation of concerns through Custom Hooks and modular styles.
 
 ---
 
-## 💡 Características Clave de la Lógica
+## 🛠️ Tech Stack
 
-Para destacar este repositorio, me enfoqué en resolver problemas del mundo real en el desarrollo frontend:
-
-1.  **Arquitectura Basada en Hooks:** La lógica de consumo asíncrono, control de estados de carga (`loading`) y manejo de errores (`error`) está totalmente aislada de la interfaz visual mediante el Custom Hook `useProducts`.
-2.  **Estado Global Optimizado:** El carrito de compras no produce _re-renders_ masivos en la aplicación gracias al sistema de selectores de Zustand.
-3.  **Persistencia Automática:** El estado del carrito sobrevive a recargas de página (F5) o cierres de pestaña mediante la sincronización automática con el `LocalStorage`.
-4.  **Simulación de Pasarela Bancaria:** El formulario de _Checkout_ valida estructuras complejas de tarjetas (16 dígitos, formato MM/YY, CVV) y simula la latencia de una petición de red con estados asíncronos antes de confirmar la compra.
+- **Core:** [React 19](https://react.dev/) + [Vite](https://vitejs.dev/).
+- **Language:** [TypeScript](https://www.typescriptlang.org/) with strict typing.
+- **Global state:** [Zustand](https://zustand-demo.pmnd.rs/) with persistence middleware for the cart.
+- **Routing:** [React Router](https://reactrouter.com/) (SPA).
+- **Forms and validation:** [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/).
+- **Styling:** [Sass Modules](https://sass-lang.com/), with component-scoped styles.
+- **Quality:** ESLint with `typescript-eslint` and the React Hooks rules.
 
 ---
 
-## 📁 Estructura del Proyecto
+## 💡 Key Features
 
-La arquitectura de carpetas sigue un orden modular y escalable:
+1. **Isolated async logic:** API calls, loading state (`loading`) and error state (`error`) live in the `useProducts` Custom Hook, separated from the UI.
+2. **Optimized global state:** the cart is read with Zustand selectors, so each component only re-renders when the data it uses changes.
+3. **Automatic persistence:** the cart survives page reloads and closed tabs thanks to the `persist` middleware, which syncs with `localStorage`.
+4. **Checkout with validation:** the form validates the card format with Zod (16 digits, MM/YY and CVV) and simulates network latency before confirming the purchase.
+
+---
+
+## 📁 Project Structure
 
 ```text
 src/
-├── components/      # Componentes visuales reutilizables (Navbar, etc.)
-├── hooks/           # Lógica asíncrona aislada (useProducts)
-├── pages/           # Vistas principales (Home, Cart, Checkout, Success)
-├── store/           # Estado global con Zustand (useCartStore)
-├── styles/          # Variables globales de Sass y estilos base
-└── types/           # Interfaces y tipos estrictos de TypeScript
+├── components/      # Reusable UI components (Navbar, etc.)
+├── hooks/           # Isolated async logic (useProducts)
+├── pages/           # Main views (Home, Cart, Checkout, Success)
+├── store/           # Global state with Zustand (useCartStore)
+├── styles/          # Global Sass variables and base styles
+└── types/           # TypeScript interfaces and types
 ```
 
-## 🚀 Instalación y Uso Local
+---
 
-Sigue estos pasos para clonar y ejecutar el e-commerce en tu máquina local:
+## 🚀 Getting Started
 
-Clonar el repositorio:
+Requires **Node.js 20 or higher** (22 recommended).
 
-git clone [https://github.com/sallygongar/react-advanced-apps/tree/main/ecommerce-premium](https://github.com/sagongar/ecommerce-premium.git)
-cd TU-REPOSITORIO
+```bash
+# 1. Clone the repository (it is a monorepo)
+git clone https://github.com/sallygongar/react-advanced-apps.git
+cd react-advanced-apps/ecommerce-premium
 
-## 2. Instalar dependencias:
-
+# 2. Install dependencies
 npm install
 
-## 3. Iniciar el servidor de desarrollo:
-
+# 3. Start the development server
 npm run dev
+```
 
-## 4. Compilar para producción (Build):
+### Available scripts
 
-npm run build
+| Command           | What it does                                                  |
+| :---------------- | :------------------------------------------------------------ |
+| `npm run dev`     | Starts the Vite development server                            |
+| `npm run build`   | Type-checks (`tsc -b`) and builds for production into `dist/` |
+| `npm run preview` | Serves the production build locally                           |
+| `npm run lint`    | Runs ESLint on the project                                    |
 
-📄 Licencia
-Este proyecto es de código abierto y está disponible bajo la Licencia MIT.
+---
+
+## 🗺️ Next Steps
+
+- [ ] Tests with Vitest and Testing Library (cart and checkout validation schema)
+- [ ] Product detail page
+- [ ] Search and category filters in the catalog
+- [ ] Card number validation with the Luhn algorithm
+
+---
+
+## 📄 License
+
+Distributed under the MIT License.
