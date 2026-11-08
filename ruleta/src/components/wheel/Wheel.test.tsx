@@ -64,11 +64,19 @@ describe("Wheel: error al cargar los premios", () => {
     expect(screen.queryByAltText("ping")).not.toBeInTheDocument();
   });
 
+  it("no renderiza el canvas cuando hay error", () => {
+    mockWheel({ error: "Failed to fetch" });
+    const { container } = render(<Wheel />);
+
+    expect(container.querySelector("canvas")).toBeNull();
+  });
+
   it("no muestra el aviso cuando todo va bien", () => {
     mockWheel();
-    render(<Wheel />);
+    const { container } = render(<Wheel />);
 
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(screen.getByAltText("ping")).toBeInTheDocument();
+    expect(container.querySelector("canvas")).not.toBeNull();
   });
 });

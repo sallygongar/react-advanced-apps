@@ -28,8 +28,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       prizes,
     });
   } catch (error) {
+    console.error("Error en prizes:", getErrorMessage(error));
     return res
       .status(500)
-      .json({ success: false, error: getErrorMessage(error) });
+      .json({ success: false, error: "Error interno del servidor" });
   }
 }

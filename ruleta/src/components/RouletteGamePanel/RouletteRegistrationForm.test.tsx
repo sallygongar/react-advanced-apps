@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import RouletteRegistrationForm from "./RouletteRegistrationForm"; // ← ajusta si tu archivo se llama distinto
+import RouletteRegistrationForm from "./RouletteRegistrationForm";
 import { useRouletteForm } from "../../context/form/useFormContext";
 
 // Reemplazamos el hook real por uno falso para controlar el estado en cada test
@@ -17,6 +17,8 @@ const mockForm = (overrides = {}) => {
     acceptedTerms: false,
     isPlaying: false,
     isVerifying: false,
+    hasPrizesError: false,
+    isLoading: false,
     onTermsChange: vi.fn(),
     onInputChange: vi.fn(),
     onValidateForm: vi.fn(() => true),
@@ -50,6 +52,20 @@ describe("RouletteRegistrationForm: estados del botón", () => {
 
     expect(screen.getByRole("button", { name: "Jugando..." })).toBeDisabled();
   });
+
+  it("se deshabilita cuando fallaron los premios", () => {
+    mockForm({ hasPrizesError: true });
+    render(<RouletteRegistrationForm />);
+
+    expect(screen.getByRole("button", { name: "Jugar" })).toBeDisabled();
+  });
+
+  it("se deshabilita mientras cargan los premios", () => {
+    mockForm({ isLoading: true });
+    render(<RouletteRegistrationForm />);
+
+    expect(screen.getByRole("button", { name: "Jugar" })).toBeDisabled();
+  });
 });
 
 describe("RouletteRegistrationForm: envío", () => {
@@ -80,6 +96,16 @@ describe("RouletteRegistrationForm: envío", () => {
     await userEvent.click(
       screen.getByRole("button", { name: "Verificando..." }),
     );
+
+    expect(form.onValidateForm).not.toHaveBeenCalled();
+    expect(form.playRoulette).not.toHaveBeenCalled();
+  });
+
+  it("no hace nada al hacer clic si los premios fallaron", async () => {
+    const form = mockForm({ hasPrizesError: true });
+    render(<RouletteRegistrationForm />);
+
+    await userEvent.click(screen.getByRole("button", { name: "Jugar" }));
 
     expect(form.onValidateForm).not.toHaveBeenCalled();
     expect(form.playRoulette).not.toHaveBeenCalled();

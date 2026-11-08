@@ -65,8 +65,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // El usuario existe pero no ha jugado en este evento
     return res.status(200).json({ hasPlayed: false });
   } catch (error) {
+    console.error("Error en check-user:", getErrorMessage(error));
     return res
       .status(500)
-      .json({ success: false, error: getErrorMessage(error) });
+      .json({ success: false, error: "Error interno del servidor" });
   }
 }
