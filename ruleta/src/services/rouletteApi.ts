@@ -1,4 +1,18 @@
-import type { PrizeData } from "../types/wheel";
+import type { PrizeData, PromotionItem } from "../types/wheel";
+
+export const fetchPrizes = async (): Promise<PromotionItem[]> => {
+  const response = await fetch("/api/prizes");
+  if (!response.ok) throw new Error("Error al obtener la lista de premios");
+
+  const data = await response.json();
+  if (!data.success) {
+    throw new Error(data.error || "No se pudieron cargar los premios");
+  }
+  if (!Array.isArray(data.prizes) || data.prizes.length === 0) {
+    throw new Error("No hay premios disponibles");
+  }
+  return data.prizes;
+};
 
 export const fetchUserStatus = async (email: string) => {
   const response = await fetch(
