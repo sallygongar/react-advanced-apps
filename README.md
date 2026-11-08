@@ -78,5 +78,5 @@ Each app is independent: go into its folder, install dependencies, and run `npm 
 If you are a recruiter, a developer, or just interested in my work:
 
 - **GitHub:** [@sallygongar](https://github.com/sallygongar)
-- **LinkedIn:** [Sally González](https://www.linkedin.com//in/sally-candelaria-b56a9a183/)
+- **LinkedIn:** [Sally González](https://www.linkedin.com/in/sally-candelaria-b56a9a183/)
 - **Email:** sallygonzalez1908@gmail.com
