@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { supabase } from "./lib/supabase.ts";
+import { getErrorMessage } from "./lib/errors.ts";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const currentEvent = process.env.ACTIVE_EVENT || "CYBER";
@@ -63,7 +64,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // El usuario existe pero no ha jugado en este evento
     return res.status(200).json({ hasPlayed: false });
-  } catch (error: any) {
-    return res.status(500).json({ success: false, error: error.message });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, error: getErrorMessage(error) });
   }
 }

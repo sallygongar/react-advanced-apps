@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { supabase } from "./lib/supabase.ts";
+import { getErrorMessage } from "./lib/errors.ts";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "GET") {
@@ -26,7 +27,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       success: true,
       prizes,
     });
-  } catch (error: any) {
-    return res.status(500).json({ success: false, error: error.message });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, error: getErrorMessage(error) });
   }
 }

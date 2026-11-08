@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { supabase } from "./lib/supabase.ts";
+import { getErrorMessage } from "./lib/errors.ts";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Solo permitimos peticiones POST para guardar registros
@@ -83,7 +84,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       message: "Premio registrado exitosamente en el historial",
       winner: spinData,
     });
-  } catch (error: any) {
-    return res.status(500).json({ success: false, error: error.message });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, error: getErrorMessage(error) });
   }
 }
