@@ -1,5 +1,7 @@
 # 💻 React & TypeScript: Advanced Applications Portfolio
 
+![CI ruleta](https://github.com/sallygongar/react-advanced-apps/actions/workflows/ci-ruleta.yml/badge.svg)
+
 Welcome to my development lab! This repository is a **monorepo** that brings together my advanced frontend projects. Its goal is to showcase scalable architecture, complex state management, strict typing, and good practices within the modern **React** and **TypeScript** ecosystem.
 
 ---
@@ -46,7 +48,6 @@ All projects use **Vite**, strict linting, and are deployed on **Vercel**.
 - **Supabase** as the database, with server-side verification before every play.
 - **Dual persistence:** `localStorage` for instant UX and Supabase as the source of truth.
 - **Error and loading state handling** with `try/catch/finally`.
-
 
 ## ⚙️ Monorepo Structure
 
