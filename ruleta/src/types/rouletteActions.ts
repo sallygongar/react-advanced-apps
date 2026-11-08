@@ -12,5 +12,5 @@ export interface RouletteActions {
   onClearRoulette?: () => void;
   onClearForm?: () => void;
   setUserEmail?: (email: string) => void;
-  retryLoadPrizes: () => void;
+  retryLoadPrizes?: () => void;
 }
